@@ -34,6 +34,7 @@ from .hitbtc import HitBTC
 from .huobi import Huobi
 from .huobi_dm import HuobiDM
 from .huobi_swap import HuobiSwap
+from .huobi_korea import HuobiKorea
 from .kraken import Kraken
 from .kraken_futures import KrakenFutures
 from .kucoin import KuCoin
@@ -71,6 +72,7 @@ EXCHANGE_MAP = {
     HITBTC: HitBTC,
     HUOBI_DM: HuobiDM,
     HUOBI_SWAP: HuobiSwap,
+    HUOBI_KOREA: HuobiKorea,
     HUOBI: Huobi,
     KRAKEN_FUTURES: KrakenFutures,
     KRAKEN: Kraken,
