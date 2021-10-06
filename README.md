@@ -59,9 +59,9 @@ fh = FeedHandler()
 
 # ticker, trade, and book are user defined functions that
 # will be called when ticker, trade and book updates are received
-ticker_cb = {TICKER: TickerCallback(ticker)}
-trade_cb = {TRADES: TradeCallback(trade)}
-gemini_cb = {TRADES: TradeCallback(trade), L2_BOOK: BookCallback(book)}
+ticker_cb = {TICKER: ticker}
+trade_cb = {TRADES: trade}
+gemini_cb = {TRADES: trade, L2_BOOK: book}
 
 
 fh.add_feed(Coinbase(symbols=['BTC-USD'], channels=[TICKER], callbacks=ticker_cb))
@@ -109,10 +109,9 @@ Cryptofeed supports the following channels from exchanges:
 * TRADES - Note this reports the taker's side, even for exchanges that report the maker side.
 * TICKER
 * FUNDING
-* BOOK_DELTA - Subscribed to with L2 or L3 books, receive book deltas rather than the entire book on updates. Full updates will be periodically sent on the L2 or L3 channel. If BOOK_DELTA is enabled, only L2 or L3 book can be enabled, not both. To receive both create two `feedhandler` objects. Not all exchanges are supported, as some exchanges send complete books on every update.
 * OPEN_INTEREST - Open interest data.
 * LIQUIDATIONS
-* FUTURES_INDEX
+* INDEX
 * CANDLES - Candlestick / K-Line data.
 
 ### Authenticated Data Channels
@@ -120,12 +119,12 @@ Cryptofeed supports the following channels from exchanges:
 * ORDER_INFO - Order status updates
 * TRANSACTIONS - Real-time updates on account deposits and withdrawals
 * BALANCES - Updates on wallet funds
-* USER_FILLS - Executed user trades
+* FILLS - User's executed trades
 
 
 ## Backends
 
-Cryptofeed supports `backend` callbacks that will write directly to storage or other interfaces
+Cryptofeed supports `backend` callbacks that will write directly to storage or other interfaces.
 
 Supported Backends:
 * Redis (Streams and Sorted Sets)
@@ -156,7 +155,7 @@ Cryptofeed has optional dependencies, depending on the backends used. You can in
 
     pip install cryptofeed[all]
 
-If you wish to clone the repository and install from source, run this command from the root of the cloned repository
+If you wish to clone the repository and install from source, run this command from the root of the cloned repository.
 
     python setup.py install
 
@@ -164,7 +163,7 @@ Alternatively, you can install in 'edit' mode (also called development mode):
 
     python setup.py develop
 
-See more options, explanations and Pipenv usage in [INSTALL.md](https://github.com/bmoscon/cryptofeed/blob/master/INSTALL.md).
+See more discussion of package installation in [INSTALL.md](https://github.com/bmoscon/cryptofeed/blob/master/INSTALL.md).
 
 
 
@@ -175,7 +174,7 @@ Cryptofeed supports some REST interfaces for retrieving real-time and historical
 
 ## Future Work
 
-There are a lot of planned features, new exchanges, etc planned! If you'd like to discuss ongoing development please join the [slack](https://join.slack.com/t/cryptofeed-dev/shared_invite/enQtNjY4ODIwODA1MzQ3LTIzMzY3Y2YxMGVhNmQ4YzFhYTc3ODU1MjQ5MDdmY2QyZjdhMGU5ZDFhZDlmMmYzOTUzOTdkYTZiOGUwNGIzYTk) or open a thread in the [discussions](https://github.com/bmoscon/cryptofeed/discussions) in GitHub.
+There are a lot of planned features, new exchanges, etc planned! If you'd like to discuss ongoing development, please join the [slack](https://join.slack.com/t/cryptofeed-dev/shared_invite/enQtNjY4ODIwODA1MzQ3LTIzMzY3Y2YxMGVhNmQ4YzFhYTc3ODU1MjQ5MDdmY2QyZjdhMGU5ZDFhZDlmMmYzOTUzOTdkYTZiOGUwNGIzYTk) or open a thread in the [discussions](https://github.com/bmoscon/cryptofeed/discussions) in GitHub.
 
 ## Contributing
 

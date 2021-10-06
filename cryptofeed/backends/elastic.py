@@ -4,6 +4,7 @@ Copyright (C) 2017-2021  Bryant Moscon - bmoscon@gmail.com
 Please see the LICENSE file for the terms and conditions
 associated with this software.
 '''
+from collections import defaultdict
 import itertools
 import logging
 from datetime import datetime as dt
@@ -12,9 +13,7 @@ from datetime import timezone as tz
 from yapic import json
 
 from cryptofeed.backends._util import book_flatten
-from cryptofeed.backends.backend import (BackendBookCallback, BackendBookDeltaCallback, BackendCandlesCallback, BackendFundingCallback,
-                                         BackendOpenInterestCallback, BackendTickerCallback, BackendTradeCallback,
-                                         BackendLiquidationsCallback)
+from cryptofeed.backends.backend import BackendBookCallback, BackendCallback
 from cryptofeed.backends.http import HTTPCallback
 
 
@@ -29,11 +28,10 @@ class ElasticCallback(HTTPCallback):
         self.session = None
         self.numeric_type = numeric_type
 
-    async def write(self, feed, symbol, timestamp, receipt_timestamp, data):
-        if 'timestamp' in data:
+    async def write(self, data):
+        if 'timestamp' in data and data['timestamp']:
             data['timestamp'] = f"{dt.fromtimestamp(data['timestamp'], tz=tz.utc).isoformat()}Z"
-        if 'receipt_timestamp' in data:
-            data['receipt_timestamp'] = f"{dt.fromtimestamp(data['receipt_timestamp'], tz=tz.utc).isoformat()}Z"
+        data['receipt_timestamp'] = f"{dt.fromtimestamp(data['receipt_timestamp'], tz=tz.utc).isoformat()}Z"
 
         await self.queue.put({'data': json.dumps(data), 'headers': {'content-type': 'application/json'}})
 
@@ -44,63 +42,44 @@ class ElasticCallback(HTTPCallback):
         await self.queue.put({'data': data, 'headers': {'content-type': 'application/x-ndjson'}})
 
 
-class TradeElastic(ElasticCallback, BackendTradeCallback):
+class TradeElastic(ElasticCallback, BackendCallback):
     default_index = 'trades'
 
 
-class FundingElastic(ElasticCallback, BackendFundingCallback):
+class FundingElastic(ElasticCallback, BackendCallback):
     default_index = 'funding'
 
 
 class BookElastic(ElasticCallback, BackendBookCallback):
     default_index = 'book'
 
-    def __init__(self, *args, index='book', **kwargs):
+    def __init__(self, *args, index='book', snapshots_only=False, snapshot_interval=1000, **kwargs):
+        self.snapshots_only = snapshots_only
+        self.snapshot_interval = snapshot_interval
+        self.snapshot_count = defaultdict(int)
         super().__init__(*args, index=index, **kwargs)
         self.addr = f"{self.addr}/_bulk"
 
-    async def write(self, feed, symbol, timestamp, receipt_timestamp, data):
-        if 'timestamp' in data:
+    async def write(self, data):
+        if 'timestamp' in data and data['timestamp']:
             data['timestamp'] = f"{dt.fromtimestamp(data['timestamp'], tz=tz.utc).isoformat()}Z"
-        if 'receipt_timestamp' in data:
-            data['receipt_timestamp'] = f"{dt.fromtimestamp(data['receipt_timestamp'], tz=tz.utc).isoformat()}Z"
-        timestamp = f"{dt.fromtimestamp(timestamp, tz=tz.utc).isoformat()}Z"
-        receipt_timestamp = F"{dt.fromtimestamp(receipt_timestamp, tz=tz.utc).isoformat()}Z"
+        data['receipt_timestamp'] = f"{dt.fromtimestamp(data['receipt_timestamp'], tz=tz.utc).isoformat()}Z"
 
-        data = book_flatten(feed, symbol, data, timestamp, False)
+        data = book_flatten(data['exchange'], data['symbol'], data['book'] if 'book' in data else data['delta'], data['timestamp'], 'delta' in data)
         await self.write_bulk(data)
 
 
-class BookDeltaElastic(ElasticCallback, BackendBookDeltaCallback):
-    default_index = 'book'
-
-    def __init__(self, *args, index='book', **kwargs):
-        super().__init__(*args, index=index, **kwargs)
-        self.addr = f"{self.addr}/_bulk"
-
-    async def write(self, feed, symbol, timestamp, receipt_timestamp, data):
-        if 'timestamp' in data:
-            data['timestamp'] = f"{dt.fromtimestamp(data['timestamp'], tz=tz.utc).isoformat()}Z"
-        if 'receipt_timestamp' in data:
-            data['receipt_timestamp'] = f"{dt.fromtimestamp(data['receipt_timestamp'], tz=tz.utc).isoformat()}Z"
-        timestamp = f"{dt.fromtimestamp(timestamp, tz=tz.utc).isoformat()}Z"
-        receipt_timestamp = F"{dt.fromtimestamp(receipt_timestamp, tz=tz.utc).isoformat()}Z"
-
-        data = book_flatten(feed, symbol, data, timestamp, True)
-        await self.write_bulk(data)
-
-
-class TickerElastic(ElasticCallback, BackendTickerCallback):
+class TickerElastic(ElasticCallback, BackendCallback):
     default_index = 'ticker'
 
 
-class OpenInterestElastic(ElasticCallback, BackendOpenInterestCallback):
+class OpenInterestElastic(ElasticCallback, BackendCallback):
     default_index = 'open_interest'
 
 
-class LiquidationsElastic(ElasticCallback, BackendLiquidationsCallback):
+class LiquidationsElastic(ElasticCallback, BackendCallback):
     default_index = 'liquidations'
 
 
-class CandlesElastic(ElasticCallback, BackendCandlesCallback):
+class CandlesElastic(ElasticCallback, BackendCallback):
     default_index = 'candles'
