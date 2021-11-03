@@ -1,11 +1,22 @@
 ## Changelog
 
-### 2.0.3
+### 2.1.0
+ * Bugfix: Update binance user data streams to use cdef types.
+ * Feature: Add none_to kwarg to to_dict method of data type objects. Allows replacmen of Nones with specified value.
+ * Bugfix: Some redis backends were trying to write Nones to storage and failing.
+ * Uodate: Renamed as_type kwarg on to_dict to numeric_type.
+ * Bugfix: Some dYdX symbols were incorrectly classified as spot.
+ * Update: Drop support for Python 3.7.
+ * Bugfix: Orderbooks need to be truncated to the correct depth when max depth is smaller than the maximum on Kraken.
+
+### 2.0.3 (2021-10-26)
  * Bugfix: Use timestamp_e6 for data derived from Bybit's instrument_info data feed.
  * Bugfix: Update postgres examples and schema. Fix postgres backend for all dtypes.
  * Bugfix: Kucoin has a limit of 100 symbols per subscription message and 300 per connection. These limits are now respected.
  * Bugfix: Error messages were not handled correctly on Kucoin, causing a crash.
  * Bugfix: FTX websocket endpoint update.
+ * Bugfix: Fix the address used for authenticated Binance streams.
+ * Bugfix: Handle cases where Bitmex book data is empty.
 
 ### 2.0.2 (2021-10-12)
  * Feature: random backoff when 429s are hit

@@ -3,6 +3,9 @@ Copyright (C) 2017-2021  Bryant Moscon - bmoscon@gmail.com
 
 Please see the LICENSE file for the terms and conditions
 associated with this software.
+
+Book backends are intentionally left out here - Arctic cannot handle high throughput
+data like book data. Arctic is best used for writing large datasets in batches.
 '''
 import arctic
 import pandas as pd
@@ -12,7 +15,7 @@ from cryptofeed.defines import CANDLES, FUNDING, OPEN_INTEREST, TICKER, TRADES, 
 
 
 class ArcticCallback:
-    def __init__(self, library, host='127.0.0.1', key=None, numeric_type=float, quota=0, ssl=False, **kwargs):
+    def __init__(self, library, host='127.0.0.1', key=None, none_to=None, numeric_type=float, quota=0, ssl=False, **kwargs):
         """
         library: str
             arctic library. Will be created if does not exist.
@@ -36,6 +39,7 @@ class ArcticCallback:
         self.lib = con[library]
         self.key = key if key else self.default_key
         self.numeric_type = numeric_type
+        self.none_to = none_to
 
     async def write(self, data):
         df = pd.DataFrame({key: [value] for key, value in data.items()})

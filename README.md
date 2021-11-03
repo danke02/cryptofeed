@@ -1,6 +1,6 @@
 # Cryptocurrency Exchange Feed Handler
 [![License](https://img.shields.io/badge/license-XFree86-blue.svg)](LICENSE)
-![Python](https://img.shields.io/badge/Python-3.7+-green.svg)
+![Python](https://img.shields.io/badge/Python-3.8+-green.svg)
 [![Build Status](https://travis-ci.com/bmoscon/cryptofeed.svg?branch=master)](https://travis-ci.com/bmoscon/cryptofeed)
 [![PyPi](https://img.shields.io/badge/PyPi-cryptofeed-brightgreen.svg)](https://pypi.python.org/pypi/cryptofeed)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/efa4e0d6e10b41d0b51454d08f7b33b1)](https://www.codacy.com/app/bmoscon/cryptofeed?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=bmoscon/cryptofeed&amp;utm_campaign=Badge_Grade)
@@ -169,7 +169,7 @@ See more discussion of package installation in [INSTALL.md](https://github.com/b
 
 ## Rest API
 
-Cryptofeed supports some REST interfaces for retrieving real-time and historical data. These are integrated into the exchange classes directly. You can view the supported methods by calling the `info()` method on any exchange.
+Cryptofeed supports some REST interfaces for retrieving real-time and historical data, as well as order placement and account management. These are integrated into the exchange classes directly. You can view the supported methods by calling the `info()` method on any exchange.
 
 
 ## Future Work
@@ -181,3 +181,10 @@ There are a lot of planned features, new exchanges, etc planned! If you'd like t
 Issues and PRs are welcomed!
 
 Cryptofeed wouldn't be possible without the help of many [contributors](AUTHORS.md)! I owe them and all other contributors my thanks!
+
+## Donations / Support
+
+Support and donations are appreciated but not required. You can donate via [GitHub Sponsors](https://github.com/sponsors/bmoscon), or via the addresses below:
+
+* Bitcoin: bc1qm0kxz8hqacaglku5fjhfe9a5hjnuyfwk02lsyr
+* Ethereum: 0x690709FEe13eEce9E7852089BB2D53Ae5D073154
